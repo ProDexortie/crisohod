@@ -55,17 +55,24 @@ class ConfigManager:
         
         # Загружаем сохраненную конфигурацию
         if self.config_file.exists():
-            with open(self.config_file, 'r') as f:
-                saved_config = json.load(f)
-                # Объединяем с значениями по умолчанию
-                default_config.update(saved_config)
+            try:
+                with open(self.config_file, 'r', encoding='utf-8') as f:
+                    saved_config = json.load(f)
+                    # Объединяем с значениями по умолчанию
+                    default_config.update(saved_config)
+            except (json.JSONDecodeError, FileNotFoundError, UnicodeDecodeError) as e:
+                print(f"Ошибка при загрузке конфигурации: {e}")
+                print("Используются настройки по умолчанию")
                 
         return default_config
         
     def save_config(self):
         """Сохранение конфигурации"""
-        with open(self.config_file, 'w') as f:
-            json.dump(self.config, f, indent=2)
+        try:
+            with open(self.config_file, 'w', encoding='utf-8') as f:
+                json.dump(self.config, f, indent=2, ensure_ascii=False)
+        except Exception as e:
+            print(f"Ошибка при сохранении конфигурации: {e}")
             
     def get(self, key, default=None):
         """Получение значения конфигурации"""
@@ -101,7 +108,7 @@ class ConfigManager:
         missing = []
         
         for name, path in paths.items():
-            if not Path(path).exists():
+            if not path or not Path(path).exists():
                 missing.append(f"{name}: {path}")
                 
         if missing:
@@ -111,18 +118,46 @@ class ConfigManager:
         
     def get_calibration_status(self):
         """Получение статуса калибровки"""
-        cal_file = Path(self.get('calibration_file', 'camera_calibration.json'))
+        cal_file_path = self.get('calibration_file', 'camera_calibration.json')
+        cal_file = Path(cal_file_path)
         
         if cal_file.exists():
-            with open(cal_file, 'r') as f:
-                cal_data = json.load(f)
+            try:
+                with open(cal_file, 'r', encoding='utf-8') as f:
+                    cal_data = json.load(f)
                 
-            return {
-                'calibrated': True,
-                'file': str(cal_file),
-                'error': cal_data.get('calibration_error', 'N/A'),
-                'pixel_to_mm': cal_data.get('pixel_to_mm_ratio', None)
-            }
+                # Безопасное извлечение значений
+                error = cal_data.get('calibration_error')
+                pixel_to_mm = cal_data.get('pixel_to_mm_ratio')
+                
+                # Проверяем и преобразуем значения
+                try:
+                    if error is not None:
+                        error = float(error)
+                except (ValueError, TypeError):
+                    error = None
+                    
+                try:
+                    if pixel_to_mm is not None:
+                        pixel_to_mm = float(pixel_to_mm)
+                except (ValueError, TypeError):
+                    pixel_to_mm = None
+                
+                return {
+                    'calibrated': True,
+                    'file': str(cal_file),
+                    'error': error,
+                    'pixel_to_mm': pixel_to_mm
+                }
+                
+            except (json.JSONDecodeError, FileNotFoundError, UnicodeDecodeError) as e:
+                print(f"Ошибка при чтении файла калибровки: {e}")
+                return {
+                    'calibrated': False,
+                    'file': str(cal_file),
+                    'error': f"Ошибка чтения файла: {e}",
+                    'pixel_to_mm': None
+                }
         else:
             return {
                 'calibrated': False,
@@ -133,22 +168,38 @@ class ConfigManager:
             
     def reset_to_defaults(self):
         """Сброс к значениям по умолчанию"""
+        # Удаляем текущий файл конфигурации
+        if self.config_file.exists():
+            try:
+                self.config_file.unlink()
+            except Exception as e:
+                print(f"Ошибка при удалении файла конфигурации: {e}")
+        
+        # Перезагружаем конфигурацию
         self.config = self._load_config()
         self.save_config()
         
     def export_config(self, filepath):
         """Экспорт конфигурации"""
-        with open(filepath, 'w') as f:
-            json.dump(self.config, f, indent=2)
+        try:
+            with open(filepath, 'w', encoding='utf-8') as f:
+                json.dump(self.config, f, indent=2, ensure_ascii=False)
+        except Exception as e:
+            print(f"Ошибка при экспорте конфигурации: {e}")
+            raise
             
     def import_config(self, filepath):
         """Импорт конфигурации"""
-        with open(filepath, 'r') as f:
-            imported_config = json.load(f)
-            
-        # Обновляем только существующие ключи
-        for key in self.config:
-            if key in imported_config:
-                self.config[key] = imported_config[key]
+        try:
+            with open(filepath, 'r', encoding='utf-8') as f:
+                imported_config = json.load(f)
                 
-        self.save_config()
+            # Обновляем только существующие ключи
+            for key in self.config:
+                if key in imported_config:
+                    self.config[key] = imported_config[key]
+                    
+            self.save_config()
+        except Exception as e:
+            print(f"Ошибка при импорте конфигурации: {e}")
+            raise

@@ -1,0 +1,48 @@
+{
+  "total_frames": 2106,
+  "duration": 70.2,
+  "fps": 30,
+  "avg_total_contact_area": 0.0,
+  "max_total_contact_area": 0.0,
+  "min_total_contact_area": 0.0,
+  "lf_stats": {
+    "avg_area": 0.0,
+    "max_area": 0.0,
+    "min_area": 0.0,
+    "std_area": 0.0,
+    "avg_length": 0.0,
+    "std_length": 0.0,
+    "avg_width": 0.0,
+    "std_width": 0.0
+  },
+  "rf_stats": {
+    "avg_area": 0.0,
+    "max_area": 0.0,
+    "min_area": 0.0,
+    "std_area": 0.0,
+    "avg_length": 0.0,
+    "std_length": 0.0,
+    "avg_width": 0.0,
+    "std_width": 0.0
+  },
+  "lb_stats": {
+    "avg_area": 0.0,
+    "max_area": 0.0,
+    "min_area": 0.0,
+    "std_area": 0.0,
+    "avg_length": 0.0,
+    "std_length": 0.0,
+    "avg_width": 0.0,
+    "std_width": 0.0
+  },
+  "rb_stats": {
+    "avg_area": 0.0,
+    "max_area": 0.0,
+    "min_area": 0.0,
+    "std_area": 0.0,
+    "avg_length": 0.0,
+    "std_length": 0.0,
+    "avg_width": 0.0,
+    "std_width": 0.0
+  }
+}

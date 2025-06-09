@@ -23,7 +23,7 @@ device: cuda:0
 metadata:
   project_path: C:\Users\ProDexorite\Desktop\Crisohod-Ulinov-2025-06-07
   pose_config_path: 
-    C:\Users\ProDexorite\Desktop\Crisohod-Ulinov-2025-06-07\dlc-models-pytorch\iteration-0\CrisohodJun7-trainset95shuffle1\train\pytorch_config.yaml
+    D:\Software\crisohod\pytorch_config.yaml
   bodyparts:
   - lf_digit1
   - lf_digit2

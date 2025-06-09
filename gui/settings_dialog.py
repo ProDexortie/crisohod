@@ -265,60 +265,88 @@ class SettingsDialog(QDialog):
         
     def load_settings(self):
         """Загрузка текущих настроек"""
-        # Общие
-        self.language_combo.setCurrentIndex(0 if self.config_manager.get('language') == 'ru' else 1)
-        self.auto_save_check.setChecked(self.config_manager.get('auto_save', True))
-        self.auto_save_interval.setValue(self.config_manager.get('auto_save_interval', 300))
-        self.experiments_dir_edit.setText(self.config_manager.get('experiments_dir', 'experiments'))
+        try:
+            # Общие
+            self.language_combo.setCurrentIndex(0 if self.config_manager.get('language') == 'ru' else 1)
+            self.auto_save_check.setChecked(self.config_manager.get('auto_save', True))
+            self.auto_save_interval.setValue(self.config_manager.get('auto_save_interval', 300))
+            self.experiments_dir_edit.setText(self.config_manager.get('experiments_dir', 'experiments'))
+            
+            # Пути
+            self.config_path_edit.setText(self.config_manager.get('config_path', ''))
+            self.pytorch_config_edit.setText(self.config_manager.get('pytorch_config_path', ''))
+            self.snapshot_edit.setText(self.config_manager.get('snapshot_path', ''))
+            self.calibration_edit.setText(self.config_manager.get('calibration_file', ''))
+            
+            # Обновляем статус калибровки
+            self.update_calibration_status()
+            
+            # Обработка
+            self.batch_size_spin.setValue(self.config_manager.get('batch_size', 8))
+            self.force_reprocess_check.setChecked(self.config_manager.get('force_reprocess', False))
+            self.show_calibration_check.setChecked(self.config_manager.get('show_calibration_info', False))
+            self.likelihood_threshold_spin.setValue(self.config_manager.get('likelihood_threshold', 0.6))
+            
+            # Анализ
+            self.use_adaptive_check.setChecked(self.config_manager.get('use_adaptive_threshold', True))
+            self.threshold_spin.setValue(self.config_manager.get('threshold_value', 128))
+            self.min_area_spin.setValue(self.config_manager.get('min_contact_area', 50))
+            self.pixel_to_mm_spin.setValue(self.config_manager.get('pixel_to_mm', 0.1))
+        except Exception as e:
+            print(f"Ошибка при загрузке настроек: {e}")
+            # Устанавливаем значения по умолчанию
+            self.set_default_values()
+    
+    def set_default_values(self):
+        """Установка значений по умолчанию"""
+        self.language_combo.setCurrentIndex(0)
+        self.auto_save_check.setChecked(True)
+        self.auto_save_interval.setValue(300)
+        self.experiments_dir_edit.setText('experiments')
         
-        # Пути
-        self.config_path_edit.setText(self.config_manager.get('config_path', ''))
-        self.pytorch_config_edit.setText(self.config_manager.get('pytorch_config_path', ''))
-        self.snapshot_edit.setText(self.config_manager.get('snapshot_path', ''))
-        self.calibration_edit.setText(self.config_manager.get('calibration_file', ''))
+        self.batch_size_spin.setValue(8)
+        self.force_reprocess_check.setChecked(False)
+        self.show_calibration_check.setChecked(False)
+        self.likelihood_threshold_spin.setValue(0.6)
         
-        # Обновляем статус калибровки
-        self.update_calibration_status()
+        self.use_adaptive_check.setChecked(True)
+        self.threshold_spin.setValue(128)
+        self.min_area_spin.setValue(50)
+        self.pixel_to_mm_spin.setValue(0.1)
         
-        # Обработка
-        self.batch_size_spin.setValue(self.config_manager.get('batch_size', 8))
-        self.force_reprocess_check.setChecked(self.config_manager.get('force_reprocess', False))
-        self.show_calibration_check.setChecked(self.config_manager.get('show_calibration_info', False))
-        self.likelihood_threshold_spin.setValue(self.config_manager.get('likelihood_threshold', 0.6))
-        
-        # Анализ
-        self.use_adaptive_check.setChecked(self.config_manager.get('use_adaptive_threshold', True))
-        self.threshold_spin.setValue(self.config_manager.get('threshold_value', 128))
-        self.min_area_spin.setValue(self.config_manager.get('min_contact_area', 50))
-        self.pixel_to_mm_spin.setValue(self.config_manager.get('pixel_to_mm', 0.1))
+        self.calibration_status.setText("Калибровка не выполнена")
+        self.calibration_status.setStyleSheet("color: orange;")
         
     def save_settings(self):
         """Сохранение настроек"""
-        # Общие
-        self.config_manager.set('language', 'ru' if self.language_combo.currentIndex() == 0 else 'en')
-        self.config_manager.set('auto_save', self.auto_save_check.isChecked())
-        self.config_manager.set('auto_save_interval', self.auto_save_interval.value())
-        self.config_manager.set('experiments_dir', self.experiments_dir_edit.text())
-        
-        # Пути
-        self.config_manager.set('config_path', self.config_path_edit.text())
-        self.config_manager.set('pytorch_config_path', self.pytorch_config_edit.text())
-        self.config_manager.set('snapshot_path', self.snapshot_edit.text())
-        self.config_manager.set('calibration_file', self.calibration_edit.text())
-        
-        # Обработка
-        self.config_manager.set('batch_size', self.batch_size_spin.value())
-        self.config_manager.set('force_reprocess', self.force_reprocess_check.isChecked())
-        self.config_manager.set('show_calibration_info', self.show_calibration_check.isChecked())
-        self.config_manager.set('likelihood_threshold', self.likelihood_threshold_spin.value())
-        
-        # Анализ
-        self.config_manager.set('use_adaptive_threshold', self.use_adaptive_check.isChecked())
-        self.config_manager.set('threshold_value', self.threshold_spin.value())
-        self.config_manager.set('min_contact_area', self.min_area_spin.value())
-        self.config_manager.set('pixel_to_mm', self.pixel_to_mm_spin.value())
-        
-        self.config_manager.save_config()
+        try:
+            # Общие
+            self.config_manager.set('language', 'ru' if self.language_combo.currentIndex() == 0 else 'en')
+            self.config_manager.set('auto_save', self.auto_save_check.isChecked())
+            self.config_manager.set('auto_save_interval', self.auto_save_interval.value())
+            self.config_manager.set('experiments_dir', self.experiments_dir_edit.text())
+            
+            # Пути
+            self.config_manager.set('config_path', self.config_path_edit.text())
+            self.config_manager.set('pytorch_config_path', self.pytorch_config_edit.text())
+            self.config_manager.set('snapshot_path', self.snapshot_edit.text())
+            self.config_manager.set('calibration_file', self.calibration_edit.text())
+            
+            # Обработка
+            self.config_manager.set('batch_size', self.batch_size_spin.value())
+            self.config_manager.set('force_reprocess', self.force_reprocess_check.isChecked())
+            self.config_manager.set('show_calibration_info', self.show_calibration_check.isChecked())
+            self.config_manager.set('likelihood_threshold', self.likelihood_threshold_spin.value())
+            
+            # Анализ
+            self.config_manager.set('use_adaptive_threshold', self.use_adaptive_check.isChecked())
+            self.config_manager.set('threshold_value', self.threshold_spin.value())
+            self.config_manager.set('min_contact_area', self.min_area_spin.value())
+            self.config_manager.set('pixel_to_mm', self.pixel_to_mm_spin.value())
+            
+            self.config_manager.save_config()
+        except Exception as e:
+            QMessageBox.warning(self, "Ошибка", f"Не удалось сохранить настройки: {e}")
         
     def browse_experiments_dir(self):
         """Выбор директории экспериментов"""
@@ -366,18 +394,46 @@ class SettingsDialog(QDialog):
             
     def update_calibration_status(self):
         """Обновление статуса калибровки"""
-        cal_status = self.config_manager.get_calibration_status()
-        
-        if cal_status['calibrated']:
-            self.calibration_status.setText(
-                f"✓ Калибровка выполнена\n"
-                f"Ошибка: {cal_status['error']:.3f}\n"
-                f"Коэффициент: {cal_status['pixel_to_mm']:.4f} мм/px"
-            )
-            self.calibration_status.setStyleSheet("color: green;")
-        else:
-            self.calibration_status.setText("✗ Калибровка не выполнена")
-            self.calibration_status.setStyleSheet("color: orange;")
+        try:
+            cal_status = self.config_manager.get_calibration_status()
+            
+            if cal_status.get('calibrated', False):
+                # Безопасное форматирование значений
+                error_val = cal_status.get('error')
+                pixel_to_mm_val = cal_status.get('pixel_to_mm')
+                
+                status_text = "✓ Калибровка выполнена\n"
+                
+                # Обрабатываем ошибку
+                if error_val is not None:
+                    try:
+                        error_float = float(error_val)
+                        status_text += f"Ошибка: {error_float:.3f}\n"
+                    except (ValueError, TypeError):
+                        status_text += f"Ошибка: {error_val}\n"
+                else:
+                    status_text += "Ошибка: н/д\n"
+                
+                # Обрабатываем коэффициент
+                if pixel_to_mm_val is not None:
+                    try:
+                        pixel_to_mm_float = float(pixel_to_mm_val)
+                        status_text += f"Коэффициент: {pixel_to_mm_float:.4f} мм/px"
+                    except (ValueError, TypeError):
+                        status_text += f"Коэффициент: {pixel_to_mm_val} мм/px"
+                else:
+                    status_text += "Коэффициент: н/д"
+                
+                self.calibration_status.setText(status_text)
+                self.calibration_status.setStyleSheet("color: green;")
+            else:
+                self.calibration_status.setText("✗ Калибровка не выполнена")
+                self.calibration_status.setStyleSheet("color: orange;")
+                
+        except Exception as e:
+            print(f"Ошибка при обновлении статуса калибровки: {e}")
+            self.calibration_status.setText("Ошибка при проверке калибровки")
+            self.calibration_status.setStyleSheet("color: red;")
             
     def restore_defaults(self):
         """Восстановление значений по умолчанию"""
@@ -388,8 +444,11 @@ class SettingsDialog(QDialog):
         )
         
         if reply == QMessageBox.Yes:
-            self.config_manager.reset_to_defaults()
-            self.load_settings()
+            try:
+                self.config_manager.reset_to_defaults()
+                self.load_settings()
+            except Exception as e:
+                QMessageBox.warning(self, "Ошибка", f"Не удалось восстановить настройки: {e}")
             
     def accept(self):
         """Принятие изменений"""

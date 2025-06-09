@@ -160,9 +160,9 @@ class EnhancedPawAnalyzer:
                     if likelihood > 0.6:
                         points.append({
                             'name': point_name,
-                            'x': x,
-                            'y': y,
-                            'likelihood': likelihood
+                            'x': float(x),  # Конвертируем в float
+                            'y': float(y),  # Конвертируем в float
+                            'likelihood': float(likelihood)  # Конвертируем в float
                         })
                 except:
                     continue
@@ -177,8 +177,8 @@ class EnhancedPawAnalyzer:
             contact_area_px, contact_mask = self._analyze_contact_area(frame, bbox)
             contact_area_mm2 = contact_area_px * (self.pixel_to_mm ** 2)
             
-            frame_data[f'{paw_name}_area_px'] = contact_area_px
-            frame_data[f'{paw_name}_area_mm2'] = contact_area_mm2
+            frame_data[f'{paw_name}_area_px'] = int(contact_area_px)  # Конвертируем в int
+            frame_data[f'{paw_name}_area_mm2'] = float(contact_area_mm2)  # Конвертируем в float
             
             # Морфометрические параметры
             morpho_params = self._calculate_morphometric_params(points, paw_name)
@@ -274,11 +274,11 @@ class EnhancedPawAnalyzer:
             length_px = max_dist
             length_mm = length_px * self.pixel_to_mm
             
-            params[f'{paw_name}_length_px'] = length_px
-            params[f'{paw_name}_length_mm'] = length_mm
+            params[f'{paw_name}_length_px'] = float(length_px)  # Конвертируем в float
+            params[f'{paw_name}_length_mm'] = float(length_mm)  # Конвертируем в float
         else:
-            params[f'{paw_name}_length_px'] = 0
-            params[f'{paw_name}_length_mm'] = 0
+            params[f'{paw_name}_length_px'] = 0.0
+            params[f'{paw_name}_length_mm'] = 0.0
             
         # Для задних лап - дополнительные параметры
         if paw_name.endswith('b'):  # lb или rb
@@ -292,11 +292,11 @@ class EnhancedPawAnalyzer:
                 width_1_5_px = np.linalg.norm(d5_pos - d1_pos)
                 width_1_5_mm = width_1_5_px * self.pixel_to_mm
                 
-                params[f'{paw_name}_width_1_5_px'] = width_1_5_px
-                params[f'{paw_name}_width_1_5_mm'] = width_1_5_mm
+                params[f'{paw_name}_width_1_5_px'] = float(width_1_5_px)
+                params[f'{paw_name}_width_1_5_mm'] = float(width_1_5_mm)
             else:
-                params[f'{paw_name}_width_1_5_px'] = 0
-                params[f'{paw_name}_width_1_5_mm'] = 0
+                params[f'{paw_name}_width_1_5_px'] = 0.0
+                params[f'{paw_name}_width_1_5_mm'] = 0.0
                 
             # Расстояние между 2 и 4 пальцами
             digit2 = next((p for p in points if 'digit2' in p['name']), None)
@@ -308,11 +308,11 @@ class EnhancedPawAnalyzer:
                 width_2_4_px = np.linalg.norm(d4_pos - d2_pos)
                 width_2_4_mm = width_2_4_px * self.pixel_to_mm
                 
-                params[f'{paw_name}_width_2_4_px'] = width_2_4_px
-                params[f'{paw_name}_width_2_4_mm'] = width_2_4_mm
+                params[f'{paw_name}_width_2_4_px'] = float(width_2_4_px)
+                params[f'{paw_name}_width_2_4_mm'] = float(width_2_4_mm)
             else:
-                params[f'{paw_name}_width_2_4_px'] = 0
-                params[f'{paw_name}_width_2_4_mm'] = 0
+                params[f'{paw_name}_width_2_4_px'] = 0.0
+                params[f'{paw_name}_width_2_4_mm'] = 0.0
         else:
             # Для передних лап только общая ширина
             if digits and len(digits) >= 2:
@@ -321,11 +321,11 @@ class EnhancedPawAnalyzer:
                 width_px = max(x_coords) - min(x_coords)
                 width_mm = width_px * self.pixel_to_mm
                 
-                params[f'{paw_name}_width_px'] = width_px
-                params[f'{paw_name}_width_mm'] = width_mm
+                params[f'{paw_name}_width_px'] = float(width_px)
+                params[f'{paw_name}_width_mm'] = float(width_mm)
             else:
-                params[f'{paw_name}_width_px'] = 0
-                params[f'{paw_name}_width_mm'] = 0
+                params[f'{paw_name}_width_px'] = 0.0
+                params[f'{paw_name}_width_mm'] = 0.0
                 
         return params
         
@@ -389,8 +389,8 @@ class EnhancedPawAnalyzer:
     def _calculate_statistics(self, df):
         """Расчет статистики по всему видео"""
         stats = {
-            'total_frames': len(df),
-            'duration': len(df) / 30.0,  # Предполагаем 30 FPS
+            'total_frames': int(len(df)),
+            'duration': float(len(df) / 30.0),  # Предполагаем 30 FPS
             'fps': 30
         }
         
@@ -402,10 +402,11 @@ class EnhancedPawAnalyzer:
                 for paw in ['lf', 'rf', 'lb', 'rb']
             ])
             total_areas.append(total_area)
-            
-        stats['avg_total_contact_area'] = np.mean(total_areas)
-        stats['max_total_contact_area'] = np.max(total_areas)
-        stats['min_total_contact_area'] = np.min(total_areas)
+        
+        # Конвертируем numpy типы в Python типы
+        stats['avg_total_contact_area'] = float(np.mean(total_areas))
+        stats['max_total_contact_area'] = float(np.max(total_areas))
+        stats['min_total_contact_area'] = float(np.min(total_areas))
         
         # Статистика по каждой лапе
         for paw in ['lf', 'rf', 'lb', 'rb']:
@@ -415,10 +416,10 @@ class EnhancedPawAnalyzer:
             area_col = f'{paw}_area_mm2'
             if area_col in df.columns:
                 areas = df[area_col]
-                paw_stats['avg_area'] = areas.mean()
-                paw_stats['max_area'] = areas.max()
-                paw_stats['min_area'] = areas[areas > 0].min() if any(areas > 0) else 0
-                paw_stats['std_area'] = areas.std()
+                paw_stats['avg_area'] = float(areas.mean())
+                paw_stats['max_area'] = float(areas.max())
+                paw_stats['min_area'] = float(areas[areas > 0].min()) if any(areas > 0) else 0.0
+                paw_stats['std_area'] = float(areas.std())
                 
             # Длина
             length_col = f'{paw}_length_mm'
@@ -426,11 +427,11 @@ class EnhancedPawAnalyzer:
                 lengths = df[length_col]
                 lengths_valid = lengths[lengths > 0]
                 if len(lengths_valid) > 0:
-                    paw_stats['avg_length'] = lengths_valid.mean()
-                    paw_stats['std_length'] = lengths_valid.std()
+                    paw_stats['avg_length'] = float(lengths_valid.mean())
+                    paw_stats['std_length'] = float(lengths_valid.std())
                 else:
-                    paw_stats['avg_length'] = 0
-                    paw_stats['std_length'] = 0
+                    paw_stats['avg_length'] = 0.0
+                    paw_stats['std_length'] = 0.0
                     
             # Ширина
             if paw.endswith('b'):
@@ -442,11 +443,11 @@ class EnhancedPawAnalyzer:
                 widths = df[width_col]
                 widths_valid = widths[widths > 0]
                 if len(widths_valid) > 0:
-                    paw_stats['avg_width'] = widths_valid.mean()
-                    paw_stats['std_width'] = widths_valid.std()
+                    paw_stats['avg_width'] = float(widths_valid.mean())
+                    paw_stats['std_width'] = float(widths_valid.std())
                 else:
-                    paw_stats['avg_width'] = 0
-                    paw_stats['std_width'] = 0
+                    paw_stats['avg_width'] = 0.0
+                    paw_stats['std_width'] = 0.0
                     
             stats[f'{paw}_stats'] = paw_stats
             
