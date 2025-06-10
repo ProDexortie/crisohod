@@ -32,6 +32,7 @@ class VideoThread(QThread):
         self.show_labels = True
         self.show_paw_areas = True
         
+        
     def load_video(self, video_path):
         """Загрузка видео"""
         if self.cap:
@@ -224,6 +225,7 @@ class VideoPlayer(QWidget):
         super().__init__()
         self.video_path = None
         self.csv_path = None
+        self.config_path = None  # Добавить сохранение пути к конфигурации
         self.video_thread = VideoThread()
         self.init_ui()
         self.setup_connections()
@@ -338,8 +340,9 @@ class VideoPlayer(QWidget):
         """Загрузка обработанного видео с CSV"""
         self.load_video(video_path)
         self.csv_path = csv_path
+        self.config_path = Path(config_path).absolute()  # Сохраняем абсолютный путь
         self.video_thread.load_csv(csv_path)
-        self.video_thread.load_config(config_path)
+        self.video_thread.load_config(str(self.config_path))  # Передаем абсолютный путь
         
         # Обновляем первый кадр
         self.seek(0)

@@ -14,14 +14,15 @@ class VideoPreprocessor:
     
     def __init__(self, config_manager):
         self.config_manager = config_manager
-        self.calibration_file = config_manager.get('calibration_file', 'camera_calibration.json')
+        # Используем абсолютный путь
+        self.calibration_file = Path(config_manager.get_absolute_path('calibration_file', 'camera_calibration.json'))
         self.calibration_data = None
         self.camera_matrix = None
         self.dist_coeffs = None
         self.pixel_to_mm = None
         
         # Загружаем калибровку если есть
-        if Path(self.calibration_file).exists():
+        if self.calibration_file.exists():
             self.load_calibration()
             
     def load_calibration(self):

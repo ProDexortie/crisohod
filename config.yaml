@@ -7,7 +7,7 @@ identity:
 
 
 # Project path (change when moving around)
-project_path: C:\Users\ProDexorite\Desktop\Crisohod-Ulinov-2025-06-07
+project_path: D:\Software\crisohod
 
 
 # Default DeepLabCut engine to use for shuffle creation (either pytorch or tensorflow)
@@ -16,22 +16,7 @@ engine: pytorch
 
 # Annotation data set configuration (and individual video cropping parameters)
 video_sets:
-  C:\Users\ProDexorite\Desktop\Crisohod-Ulinov-2025-06-07\videos\nvcamtest_12743_s00_00001.mp4:
-    crop: 0, 640, 0, 480
-  C:\Users\ProDexorite\Desktop\Crisohod-Ulinov-2025-06-07\videos\nvcamtest_13390_s00_00000.mp4:
-    crop: 0, 640, 0, 480
-  C:\Users\ProDexorite\Desktop\Crisohod-Ulinov-2025-06-07\videos\nvcamtest_14070_s00_00000.mp4:
-    crop: 0, 640, 0, 480
-  C:\Users\ProDexorite\Desktop\Crisohod-Ulinov-2025-06-07\videos\nvcamtest_14070_s00_00001.mp4:
-    crop: 0, 640, 0, 480
-  C:\Users\ProDexorite\Desktop\Crisohod-Ulinov-2025-06-07\videos\nvcamtest_14525_s00_00000.mp4:
-    crop: 0, 640, 0, 480
-  C:\Users\ProDexorite\Desktop\Crisohod-Ulinov-2025-06-07\videos\nvcamtest_12432_s00_00000.mp4:
-    crop: 0, 640, 0, 480
-  C:\Users\ProDexorite\Desktop\Crisohod-Ulinov-2025-06-07\videos\nvcamtest_12432_s00_00001.mp4:
-    crop: 0, 640, 0, 480
-  C:\Users\ProDexorite\Desktop\Crisohod-Ulinov-2025-06-07\videos\nvcamtest_13390_s00_00004.mp4:
-    crop: 0, 640, 0, 480
+
 bodyparts:
 - lf_digit1
 - lf_digit2

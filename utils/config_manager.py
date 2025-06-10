@@ -178,6 +178,17 @@ class ConfigManager:
         # Перезагружаем конфигурацию
         self.config = self._load_config()
         self.save_config()
+
+    def get_absolute_path(self, key, default=None):
+        """Получение абсолютного пути из конфигурации"""
+        path = self.get(key, default)
+        if path:
+            path = Path(path)
+            if not path.is_absolute():
+                # Если путь относительный, делаем его относительным от текущей директории
+                path = Path.cwd() / path
+            return str(path)
+        return default
         
     def export_config(self, filepath):
         """Экспорт конфигурации"""

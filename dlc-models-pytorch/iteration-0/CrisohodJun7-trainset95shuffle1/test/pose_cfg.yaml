@@ -1,0 +1,60 @@
+dataset: D:\Software\crisohod
+dataset_type: multi-animal-imgaug
+num_joints: 26
+all_joints:
+- - 0
+- - 1
+- - 2
+- - 3
+- - 4
+- - 5
+- - 6
+- - 7
+- - 8
+- - 9
+- - 10
+- - 11
+- - 12
+- - 13
+- - 14
+- - 15
+- - 16
+- - 17
+- - 18
+- - 19
+- - 20
+- - 21
+- - 22
+- - 23
+- - 24
+- - 25
+all_joints_names:
+- lf_digit1
+- lf_digit2
+- lf_digit3
+- lf_digit4
+- lf_center
+- lf_heel
+- rf_digit1
+- rf_digit2
+- rf_digit3
+- rf_digit4
+- rf_center
+- rf_heel
+- lb_digit1
+- lb_digit2
+- lb_digit3
+- lb_digit4
+- lb_digit5
+- lb_center
+- lb_heel
+- rb_digit1
+- rb_digit2
+- rb_digit3
+- rb_digit4
+- rb_digit5
+- rb_center
+- rb_heel
+net_type: resnet_50
+global_scale: 1
+scoremap_dir: test

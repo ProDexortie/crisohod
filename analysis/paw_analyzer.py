@@ -3,6 +3,9 @@ analysis/paw_analyzer.py
 Улучшенный анализатор для измерения параметров лап
 """
 
+import matplotlib
+matplotlib.use('Agg')  # Использовать backend без GUI
+import matplotlib.pyplot as plt
 import cv2
 import numpy as np
 import pandas as pd

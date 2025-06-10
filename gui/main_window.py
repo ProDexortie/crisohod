@@ -420,10 +420,13 @@ class MainWindow(QMainWindow):
         self.stop_btn.setEnabled(False)
         self.progress_bar.setVisible(False)
         
-        # Загружаем результаты
+        # Загружаем результаты с правильными путями
+        config_path = self.config_manager.get('config_path', 'config.yaml')
+        
         self.video_player.load_processed_video(
             results['calibrated_video'],
-            results['csv_path']
+            results['csv_path'],
+            config_path  # Передаем абсолютный путь из config_manager
         )
         
         self.results_viewer.load_results(results['results'])
